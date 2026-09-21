@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Convivir — Discriminación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600;0,700;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-0:#12181c;
+  --bg-1:#182229;
+  --bg-2:#20303a;
+  --ink:#eef4f2;
+  --ink-dim:#a9c2c0;
+  --line:rgba(238,244,242,0.16);
+  --gold:#f2c94c;
+
+  --acc-cover:#4fd1c5;
+  --acc-team:#5ecbe8;
+  --acc-principios:#4fc3f7;
+  --acc-problemas:#f2b84b;
+  --acc-cartas:#f2c94c;
+  --acc-libros:#7a3040;
+  --acc-final:#6fd8a8;
+}
+*{box-sizing:border-box;}
+html,body{
+  height:100%;
+  margin:0;
+  background:var(--bg-0);
+  color:var(--ink);
+  font-family:'Lora',serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--gold);color:#14181d;}
+
+.stage{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+}
+
+.page{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:calc(48px + env(safe-area-inset-top,0px)) 32px calc(48px + env(safe-area-inset-bottom,0px));
+  background:var(--bg-1);
+  transform-origin:left center;
+  transition:transform 0.85s cubic-bezier(.65,0,.35,1), visibility 0.85s step-end;
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:1;
+}
+.page.is-active{
+  visibility:visible;
+  pointer-events:auto;
+  z-index:5;
+  transform:rotateY(0deg);
+  transition:transform 0.85s cubic-bezier(.65,0,.35,1);
+}
+.page.is-turned{
+  visibility:visible;
+  pointer-events:none;
+  z-index:2;
+  transform:rotateY(-150deg);
+  transition:transform 0.85s cubic-bezier(.65,0,.35,1), visibility 0.85s step-end;
+}
+
+.page-shade{
+  position:absolute; inset:0;
+  background:linear-gradient(to right, rgba(0,0,0,0.35), transparent 12%);
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .85s ease;
+}
+.page.is-active .page-shade{opacity:1;}
+
+.turn-zone{
+  position:absolute;
+  top:0; right:0; bottom:0;
+  width:min(90px, 12vw);
+  cursor:pointer;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.turn-zone .arrow{
+  width:34px;height:34px;
+  border-right:2px solid var(--ink-dim);
+  border-bottom:2px solid var(--ink-dim);
+  transform:rotate(-45deg);
+  opacity:.55;
+  transition:opacity .3s ease, transform .3s ease;
+}
+.turn-zone:hover .arrow{opacity:1; transform:rotate(-45deg) translate(3px,3px);}
+
+.back-zone{
+  position:absolute;
+  top:0; left:0; bottom:0;
+  width:min(70px, 10vw);
+  cursor:pointer;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.back-zone .arrow{
+  width:26px;height:26px;
+  border-left:2px solid var(--ink-dim);
+  border-top:2px solid var(--ink-dim);
+  transform:rotate(-45deg);
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.back-zone:hover .arrow{opacity:.6;}
+
+.page-num{
+  position:absolute;
+  bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  left:50%;
+  transform:translateX(-50%);
+  font-size:14px;
+  letter-spacing:.14em;
+  color:var(--ink-dim);
+  opacity:.55;
+}
+
+/* ---------- COVER ---------- */
+#page-cover{background:
+  radial-gradient(ellipse at 30% 20%, rgba(138,151,166,0.10), transparent 55%),
+  var(--bg-0);
+}
+.cover-frame{
+  border:1px solid var(--line);
+  padding:56px 48px;
+  max-width:640px;
+  text-align:center;
+  position:relative;
+}
+.cover-frame::before, .cover-frame::after{
+  content:"";
+  position:absolute;
+  width:14px;height:14px;
+  border:1px solid var(--acc-cover);
+}
+.cover-frame::before{top:-1px;left:-1px;border-right:none;border-bottom:none;}
+.cover-frame::after{bottom:-1px;right:-1px;border-left:none;border-top:none;}
+.cover-eyebrow{
+  font-size:20px;
+  color:var(--acc-cover);
+  letter-spacing:.08em;
+  margin-bottom:18px;
+}
+.cover-title{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:clamp(48px,9vw,110px);
+  line-height:1.02;
+  margin:0 0 20px;
+}
+.cover-sub{
+  font-size:20px;
+  color:var(--ink-dim);
+  font-style:italic;
+  max-width:420px;
+  margin:0 auto;
+}
+.cover-hint{
+  position:absolute;
+  bottom:calc(34px + env(safe-area-inset-bottom,0px));
+  font-size:20px;
+  color:var(--ink-dim);
+  opacity:.5;
+  letter-spacing:.06em;
+}
+
+/* ---------- TEAM ---------- */
+#page-team{
+  background:
+    repeating-linear-gradient(115deg, rgba(233,228,216,0.02) 0px, rgba(233,228,216,0.02) 1px, transparent 1px, transparent 64px),
+    var(--bg-1);
+}
+.team-title{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:clamp(28px,5vw,60px);
+  margin:0 0 8px;
+  color:var(--acc-team);
+}
+.team-kicker{
+  font-size:20px;
+  color:var(--ink-dim);
+  margin-bottom:36px;
+  text-align:center;
+  max-width:480px;
+}
+.team-list{
+  list-style:none;
+  padding:0;margin:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:280px;
+}
+.team-list li{
+  padding:14px 6px;
+  border-bottom:1px solid var(--line);
+  font-size:23px;
+  text-align:center;
+  letter-spacing:.01em;
+}
+.team-list li:last-child{border-bottom:none;}
+
+/* ---------- SOLAR PAGES (principios) ---------- */
+.solar-page{}
+.solar-heading{
+  text-align:center;
+  margin-bottom:6px;
+}
+.solar-heading h2{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:clamp(28px,5vw,38px);
+  margin:0;
+  color:var(--acc-principios);
+}
+.solar-heading p{
+  font-size:16px;
+  color:var(--ink-dim);
+  margin:6px 0 0;
+}
+.solar-system{
+  position:relative;
+  width:min(78vw, 580px);
+  height:min(78vw, 580px);
+  max-height:52vh;
+  margin-top:36px;
+}
+.orbit{
+  position:absolute;
+  border:1px dashed var(--line);
+  border-radius:50%;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+}
+.sun{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:80px;height:80px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, rgba(233,228,216,0.5), var(--acc-principios) 70%);
+  box-shadow:0 0 40px rgba(92,138,166,0.35);
+}
+.planet{
+  position:absolute;
+  width:92px;height:92px;
+  border-radius:50%;
+  background:var(--bg-2);
+  border:2px solid var(--acc-principios);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:20px;
+  line-height:1.2;
+  padding:8px;
+  cursor:pointer;
+  transition:transform .3s ease, background .3s ease, box-shadow .3s ease;
+  transform:translate(-50%,-50%);
+}
+.planet:hover{background:var(--acc-principios); color:#14181d; box-shadow:0 0 26px rgba(92,138,166,0.5); transform:translate(-50%,-50%) scale(1.08);}
+
+/* ---------- PROBLEMAS PAGE (distinct layout: vertical ledger) ---------- */
+.ledger-page{}
+.ledger-list{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  width:min(84vw, 640px);
+  margin-top:22px;
+  border-top:1px solid var(--line);
+}
+.ledger-item{
+  border-bottom:1px solid var(--line);
+  padding:20px 6px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.ledger-mark{
+  width:9px;height:9px;
+  border-radius:50%;
+  background:var(--acc-problemas);
+  flex:none;
+  transition:box-shadow .3s ease;
+}
+.ledger-item:hover .ledger-mark, .ledger-item.open .ledger-mark{
+  box-shadow:0 0 12px var(--acc-problemas);
+}
+.ledger-item h3{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:20px;
+  margin:0;
+  color:var(--ink);
+  flex:1;
+}
+.ledger-body{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .4s ease;
+  font-size:17px;
+  color:var(--ink-dim);
+  line-height:1.6;
+  padding-left:27px;
+}
+.ledger-item.open .ledger-body{max-height:220px; padding-top:10px;}
+.ledger-item.open h3{color:var(--acc-problemas);}
+
+/* modal overlay (used by planets & ledger not needed separately, shared) */
+.modal-overlay{
+  position:fixed; inset:0;
+  background:rgba(10,12,15,0.72);
+  display:flex; align-items:center; justify-content:center;
+  z-index:100;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s ease;
+  padding:24px;
+}
+.modal-overlay.show{opacity:1; pointer-events:auto;}
+.modal-box{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  max-width:520px;
+  width:100%;
+  padding:32px 30px;
+  position:relative;
+  transform:translateY(10px);
+  transition:transform .3s ease;
+}
+.modal-overlay.show .modal-box{transform:translateY(0);}
+.modal-box h3{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:26px;
+  margin:0 0 14px;
+  color:var(--modal-accent, var(--gold));
+}
+.modal-box p{font-size:17px; line-height:1.7; color:var(--ink); margin:0 0 10px;}
+.modal-box.solution-modal{
+  max-width:720px;
+  padding:56px 48px;
+}
+.modal-box.solution-modal .modal-q{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-size:19px;
+  color:var(--ink-dim);
+  margin:0 0 24px;
+  line-height:1.5;
+}
+.modal-box.solution-modal .modal-s-label{
+  font-size:12px;
+  letter-spacing:.08em;
+  color:var(--acc-cartas);
+  margin:0 0 10px;
+}
+.modal-box.solution-modal .modal-s-text{
+  font-size:26px;
+  line-height:1.5;
+  color:var(--ink);
+  margin:0;
+}
+.modal-box .modal-close{
+  position:absolute; top:14px; right:16px;
+  background:none;border:none;color:var(--ink-dim);
+  font-size:20px; cursor:pointer; line-height:1;
+  font-family:'Lora',serif;
+}
+.modal-box .modal-close:hover{color:var(--ink);}
+
+/* ---------- CARTAS PAGE ---------- */
+.cards-page{}
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:16px;
+  margin-top:26px;
+  perspective:1200px;
+  max-width:920px;
+  width:90vw;
+}
+@media (max-width:760px){
+  .cards-grid{grid-template-columns:repeat(2,1fr); max-width:340px;}
+}
+.card-slot{
+  aspect-ratio:2/3;
+  cursor:pointer;
+}
+.card-inner{
+  position:relative;
+  width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .6s cubic-bezier(.6,.1,.3,1);
+}
+.card-slot.flipped .card-inner{transform:rotateY(180deg);}
+.card-face{
+  position:absolute; inset:0;
+  backface-visibility:hidden;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+  text-align:center;
+}
+.card-front{
+  background:
+    radial-gradient(120% 90% at 30% 15%, rgba(255,255,255,0.16), transparent 55%),
+    linear-gradient(160deg, #3a3220, var(--acc-cartas) 55%, #3a3220);
+  border:1.5px solid #dcc384;
+  box-shadow:0 0 0 1px rgba(220,195,132,0.15) inset, 0 6px 18px rgba(0,0,0,0.4);
+  font-family:'Fraunces',serif;
+  font-size:46px;
+  color:#fff7e6;
+  text-shadow:0 0 14px rgba(255,240,200,0.5);
+}
+.card-back{
+  background:var(--bg-2);
+  border:1.5px solid var(--acc-cartas);
+  transform:rotateY(180deg);
+  flex-direction:column;
+  gap:10px;
+  overflow-y:auto;
+}
+.card-back p.q{
+  font-size:15px;
+  line-height:1.5;
+  color:var(--ink);
+  margin:0;
+}
+.card-back button.sol-btn{
+  font-family:'Lora',serif;
+  font-size:13px;
+  letter-spacing:.03em;
+  background:none;
+  border:1px solid var(--acc-cartas);
+  color:var(--acc-cartas);
+  padding:6px 12px;
+  cursor:pointer;
+  border-radius:3px;
+  transition:background .25s ease,color .25s ease;
+}
+.card-back button.sol-btn:hover{background:var(--acc-cartas); color:#14181d;}
+.card-back .close-card{
+  position:absolute; top:4px; right:6px;
+  background:none;border:none;color:var(--ink-dim);
+  font-size:15px;cursor:pointer;
+}
+.cards-heading{text-align:center;margin-bottom:6px;}
+.cards-heading h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(26px,5vw,36px);margin:0;color:var(--acc-cartas);}
+.cards-heading p{font-size:16px;color:var(--ink-dim);margin:6px 0 0;}
+
+/* ---------- LIBROS PAGE ---------- */
+.rug-page{
+  background:
+    radial-gradient(ellipse at center, #3a1420 0%, #260c14 60%, #1a0a0f 100%);
+  overflow:hidden;
+}
+.rug-page::before{
+  content:"";
+  position:absolute; inset:18px;
+  border:2px solid rgba(180,138,74,0.35);
+}
+.rug-page::after{
+  content:"";
+  position:absolute; inset:32px;
+  border:1px solid rgba(180,138,74,0.2);
+}
+.rug-heading{text-align:center; z-index:2; position:relative;}
+.rug-heading h2{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(26px,5vw,36px);margin:0;color:#dcc384;}
+.rug-heading p{font-size:16px;color:#c9b8a8;margin:8px 0 0;max-width:420px;}
+.critter{
+  position:absolute;
+  width:70px;height:70px;
+  border-radius:50%;
+  background:var(--bg-2);
+  border:1.5px solid #dcc384;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;
+  cursor:pointer;
+  transition:left .55s ease-out, top .55s ease-out, box-shadow .3s ease;
+  z-index:3;
+  user-select:none;
+}
+.critter:hover{box-shadow:0 0 20px rgba(220,195,132,0.4);}
+.critter.caught{
+  border-color:#7fae8f;
+  box-shadow:0 0 20px rgba(127,174,143,0.5);
+}
+
+/* ---------- FINAL PAGE ---------- */
+#page-final{background:var(--bg-0);}
+.final-title{
+  font-family:'Fraunces',serif;
+  font-weight:300;
+  font-style:italic;
+  font-size:clamp(54px,10vw,100px);
+  color:var(--ink);
+  letter-spacing:.01em;
+}
+.final-line{width:60px;height:1px;background:var(--acc-final);margin:22px 0;opacity:.6;}
+.final-sub{font-size:17px;color:var(--ink-dim);}
+
+@media (prefers-reduced-motion:reduce){
+  .page, .card-inner, .critter{transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- PAGE 1: COVER -->
+  <section class="page" id="page-cover" data-index="0">
+    <div class="page-shade"></div>
+    <div class="cover-title">
+      <div class="cover-eyebrow">Bioética — Convivir</div>
+      <h1 class="cover-title">Discriminación</h1>
+      <p class="cover-sub">El diferente, la mesa compartida y el precio de no reconocerlo.</p>
+    </div>
+    <div class="cover-hint">toca el borde derecho para abrir</div>
+    <div class="turn-zone" data-next><div class="arrow"></div></div>
+  </section>
+
+  <!-- PAGE 2: TEAM -->
+  <section class="page" id="page-team" data-index="1">
+    <div class="page-shade"></div>
+    <h2 class="team-title">El equipo</h2>
+    <p class="team-kicker">Grupo asignado al subtema de Discriminación, dentro del tema Convivir.</p>
+    <ul class="team-list">
+      <li>Esteban Sequeda</li>
+      <li>Danuel Ruiz Gutierrez</li>
+      <li>Alejandra Rivera</li>
+      <li>Laura Talero</li>
+      <li>Jasub Sastre</li>
+    </ul>
+    <div class="page-num">2</div>
+    <div class="back-zone" data-prev><div class="arrow"></div></div>
+    <div class="turn-zone" data-next><div class="arrow"></div></div>
+  </section>
+
+  <!-- PAGE 3: PRINCIPIOS (solar system) -->
+  <section class="page solar-page" id="page-principios" data-index="2">
+    <div class="page-shade"></div>
+    <div class="solar-heading">
+      <h2>Principios bioéticos</h2>
+      <p>Toca cada punto para ver cómo aparece en cada recurso.</p>
+    </div>
+    <div class="solar-system" id="solar-system">
+      <div class="orbit" style="width:38%;height:38%;"></div>
+      <div class="orbit" style="width:72%;height:72%;"></div>
+      <div class="orbit" style="width:100%;height:100%;"></div>
+      <div class="sun"></div>
+      <div class="planet" data-principle="maleficencia">No<br>maleficencia</div>
+      <div class="planet" data-principle="justicia">Justicia</div>
+      <div class="planet" data-principle="empatia">Empatía</div>
+      <div class="planet" data-principle="libertad">Libertad</div>
+    </div>
+    <div class="page-num">3</div>
+    <div class="back-zone" data-prev><div class="arrow"></div></div>
+    <div class="turn-zone" data-next><div class="arrow"></div></div>
+  </section>
+
+  <!-- PAGE 4: PROBLEMAS (ledger) -->
+  <section class="page ledger-page" id="page-problemas" data-index="3">
+    <div class="page-shade"></div>
+    <div class="solar-heading">
+      <h2 style="color:var(--acc-problemas);">Problemas bioéticos</h2>
+      <p>Toca cada línea para expandirla.</p>
+    </div>
+    <div class="ledger-list" id="ledger-list">
+      <div class="ledger-item">
+        <span class="ledger-mark"></span>
+        <h3>Deshumanizar al diferente</h3>
+      </div>
+      <div class="ledger-item">
+        <span class="ledger-mark"></span>
+        <h3>Injusticia estructural</h3>
+      </div>
+      <div class="ledger-item">
+        <span class="ledger-mark"></span>
+        <h3>Pérdida de empatía frente al poder y la apariencia</h3>
+      </div>
+    </div>
+    <div class="page-num">4</div>
+    <div class="back-zone" data-prev><div class="arrow"></div></div>
+    <div class="turn-zone" data-next><div class="arrow"></div></div>
+  </section>
+
+  <!-- PAGE 5: CARTAS (interrogantes/soluciones) -->
+  <section class="page cards-page" id="page-cartas" data-index="4">
+    <div class="page-shade"></div>
+    <div class="cards-heading">
+      <h2>Interrogantes</h2>
+      <p>Voltea cada carta. Dentro, un botón revela la solución propuesta.</p>
+    </div>
+    <div class="cards-grid" id="cards-grid"></div>
+    <div class="page-num">5</div>
+    <div class="back-zone" data-prev><div class="arrow"></div></div>
+    <div class="turn-zone" data-next><div class="arrow"></div></div>
+  </section>
+
+  <!-- PAGE 6: LIBROS -->
+  <section class="page rug-page" id="page-libros" data-index="5">
+    <div class="page-shade"></div>
+    <div class="rug-heading">
+      <h2>Relación con los libros</h2>
+      <p>Atrápalos si puedes — huyen del cursor hasta que los alcanzas.</p>
+    </div>
+    <div class="critter" id="critter-frank" style="top:30%; left:22%;">🧟</div>
+    <div class="critter" id="critter-dino" style="top:60%; left:68%;">🦖</div>
+    <div class="page-num">6</div>
+    <div class="back-zone" data-prev><div class="arrow"></div></div>
+    <div class="turn-zone" data-next><div class="arrow"></div></div>
+  </section>
+
+  <!-- PAGE 7: FINAL -->
+  <section class="page" id="page-final" data-index="6">
+    <div class="page-shade"></div>
+    <div class="final-title">Gracias</div>
+    <div class="final-line"></div>
+    <div class="final-sub">Convivir — Discriminación</div>
+    <div class="page-num">7</div>
+    <div class="back-zone" data-prev><div class="arrow"></div></div>
+  </section>
+
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box" id="modal-box">
+    <button class="modal-close" id="modal-close">×</button>
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- DATA (from provided PDF) ---------------- */
+const PRINCIPLES = {
+  maleficencia: {
+    title: "No maleficencia",
+    accent: "#5c8aa6",
+    text: `<p><strong>La discriminación hiere</strong> — física, psicológica y socialmente.</p>
+    <p><em>The Witcher:</em> el proceso que crea al brujo mata o mutila a muchos niños; hay violencia constante contra elfos y no humanos.</p>
+    <p><em>Avatar:</em> la RDA destruye el árbol madre y ataca a los na'vi.</p>
+    <p><em>Plástico:</em> el daño simbólico de reducir a la persona a su apariencia y excluirla.</p>`
+  },
+  justicia: {
+    title: "Justicia",
+    accent: "#5c8aa6",
+    text: `<p><strong>Discriminar es, por definición, injusto</strong> — trato equitativo y reparto justo de derechos y oportunidades.</p>
+    <p><em>The Witcher:</em> a los no humanos se les niega derechos y se les empuja a la miseria.</p>
+    <p><em>Avatar:</em> desalojo del territorio y explotación de un pueblo sin su consentimiento.</p>
+    <p><em>Plástico:</em> denuncia de la desigualdad racial y de clase de la sociedad.</p>`
+  },
+  empatia: {
+    title: "Empatía",
+    accent: "#5c8aa6",
+    text: `<p><strong>Comprender y hacer propio el sentir del otro</strong> — el antídoto de la discriminación.</p>
+    <p><em>The Witcher:</em> Geralt muestra compasión por los marginados y obliga a preguntar quién es el verdadero monstruo.</p>
+    <p><em>Avatar:</em> Jake Sully deja de ver "salvajes" y reconoce personas al vivir entre los na'vi.</p>
+    <p><em>Plástico:</em> invita a mirar a la persona detrás de la apariencia.</p>`
+  },
+  libertad: {
+    title: "Libertad",
+    accent: "#5c8aa6",
+    text: `<p><strong>Autonomía y derecho a existir siendo distinto</strong> — la discriminación recorta la libertad del otro.</p>
+    <p><em>The Witcher:</em> los no humanos no son libres de vivir seguros y en igualdad.</p>
+    <p><em>Avatar:</em> se niega a los na'vi su autodeterminación, su tierra y su forma de vida.</p>
+    <p><em>Plástico:</em> llama a liberarse del prejuicio y de la superficialidad que encadenan.</p>`
+  }
+};
+
+const PROBLEMS = [
+  {
+    title: "Deshumanizar al diferente",
+    text: `Cuando alguien deja de ser visto como "persona plena", herirlo o excluirlo parece legítimo. En Avatar, llamar salvajes a los na'vi precede a la destrucción del árbol madre. En The Witcher, a los brujos y no humanos se les trata como seres de segunda por su naturaleza u origen.`
+  },
+  {
+    title: "Injusticia estructural",
+    text: `La discriminación no siempre es un acto aislado; se vuelve norma, ley y costumbre. En The Witcher, los elfos son confinados a la pobreza y a los guetos y sufren pogromos. En Avatar, una corporación entera organiza el despojo del pueblo na'vi.`
+  },
+  {
+    title: "Pérdida de empatía frente al poder y la apariencia",
+    text: `Sin empatía, la dignidad se subordina al beneficio o al estatus. Plástico retrata a la "gente-plástica", que vale por lo que aparenta; en Avatar, la RDA antepone el mineral a la vida de un pueblo.`
+  }
+];
+
+const CARDS = [
+  {
+    q: "¿Qué nos da derecho a decidir que un ser vale menos por ser distinto (mutante, no humano, de otra raza o cultura)?",
+    s: "Educar en empatía y pensamiento crítico desde la infancia, con contacto real con la diferencia."
+  },
+  {
+    q: "¿Convivir es tolerar al diferente o reconocerlo como igual en dignidad?",
+    s: "Marcos de justicia: leyes y políticas antidiscriminación que garanticen igualdad de derechos y de acceso."
+  },
+  {
+    q: "¿Puede una sociedad justa construirse sobre el daño o la exclusión de una minoría?",
+    s: "Espacios de convivencia intercultural: el contacto entre grupos reduce el prejuicio mejor que el discurso."
+  },
+  {
+    q: "¿Se puede enseñar empatía? ¿Cómo se cultiva para prevenir la discriminación?",
+    s: "Narrativas que humanicen al otro: cine, música y literatura como herramientas de cambio."
+  },
+  {
+    q: "¿Dónde está el límite entre proteger a un grupo y discriminar a otro?",
+    s: "Responsabilidad ética de quien tiene poder o crea algo: no maleficencia y rendición de cuentas por el daño causado."
+  }
+];
+
+const BOOKS = {
+  frank: {
+    title: "Frankenstein",
+    text: `<p>La criatura es inteligente y, al inicio, bondadosa, pero es rechazada por su aspecto; es la discriminación de la sociedad la que la empuja a la violencia. Es el "otro" despreciado solo por ser distinto.</p>
+    <p>Aquí aparece la no maleficencia (Victor daña al crear y abandonar) y la ausencia de empatía que fabrica al "monstruo". El mensaje: <em>el monstruo no nace, se crea.</em></p>`
+  },
+  dino: {
+    title: "Mi hermano persigue dinosaurios",
+    text: `<p>Historia real de un hermano que pasa de la vergüenza al orgullo y al amor por su hermano con síndrome de Down. Habla directamente de la discriminación hacia la discapacidad y del poder transformador de la empatía.</p>
+    <p>Conecta con el convivir: la convivencia verdadera es reconocer dignidad y valor en la diferencia (justicia y empatía).</p>`
+  }
+};
+
+/* ---------------- PAGE NAVIGATION ---------------- */
+const pages = Array.from(document.querySelectorAll('.page')).sort(
+  (a,b)=>Number(a.dataset.index) - Number(b.dataset.index)
+);
+let current = 0;
+
+function render(){
+  pages.forEach((p, i)=>{
+    p.classList.remove('is-active','is-turned');
+    if(i === current){
+      p.classList.add('is-active');
+    } else if(i < current){
+      p.classList.add('is-turned');
+    }
+    // pages with i > current get no state class -> base .page rule -> hidden
+  });
+}
+function goNext(){
+  if(current >= pages.length-1) return;
+  current++;
+  render();
+}
+function goPrev(){
+  if(current <= 0) return;
+  current--;
+  render();
+}
+document.querySelectorAll('[data-next]').forEach(el=>el.addEventListener('click', goNext));
+document.querySelectorAll('[data-prev]').forEach(el=>el.addEventListener('click', goPrev));
+render();
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowRight') goNext();
+  if(e.key === 'ArrowLeft') goPrev();
+});
+
+/* ---------------- MODAL ---------------- */
+const overlay = document.getElementById('modal-overlay');
+const modalTitle = document.getElementById('modal-title');
+const modalBody = document.getElementById('modal-body');
+const modalBox = document.getElementById('modal-box');
+
+function openModal(title, html, accent){
+  modalBox.classList.remove('solution-modal');
+  modalTitle.textContent = title;
+  modalBody.innerHTML = html;
+  modalBox.style.setProperty('--modal-accent', accent || '#b48a4a');
+  overlay.classList.add('show');
+}
+function closeModal(){
+  overlay.classList.remove('show');
+  modalBox.classList.remove('solution-modal');
+}
+document.getElementById('modal-close').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+
+/* ---------------- SOLAR SYSTEM: orbit animation ---------------- */
+function initOrbits(){
+  const system = document.getElementById('solar-system');
+  const planetEls = Array.from(system.querySelectorAll('.planet'));
+  const startAngles = [-90, 0, 90, 180]; // top, right, bottom, left
+  const radiusXFraction = 0.41; // fraction of container width
+  const radiusYFraction = 0.33; // fraction of container height (flatter orbit, clears the heading)
+  const periodMs = 30000; // ms per full revolution
+  let paused = false;
+  let lastTime = null;
+
+  const state = planetEls.map((el,i)=>({ el, angle: startAngles[i] }));
+
+  system.addEventListener('mouseenter', ()=>{ paused = true; });
+  system.addEventListener('mouseleave', ()=>{ paused = false; });
+  system.addEventListener('touchstart', ()=>{ paused = true; }, {passive:true});
+
+  function frame(t){
+    if(lastTime === null) lastTime = t;
+    const dt = t - lastTime;
+    lastTime = t;
+    const w = system.clientWidth;
+    const h = system.clientHeight;
+    const cx = w/2, cy = h/2;
+    const radiusX = w * radiusXFraction;
+    const radiusY = h * radiusYFraction;
+
+    state.forEach(s=>{
+      if(!paused){
+        s.angle += (360/periodMs) * dt;
+      }
+      const rad = s.angle * Math.PI/180;
+      const x = cx + radiusX * Math.cos(rad);
+      const y = cy + radiusY * Math.sin(rad);
+      s.el.style.left = x + 'px';
+      s.el.style.top = y + 'px';
+    });
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+initOrbits();
+
+/* ---------------- SOLAR SYSTEM: clicks ---------------- */
+document.querySelectorAll('.planet').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    const key = p.dataset.principle;
+    const data = PRINCIPLES[key];
+    openModal(data.title, data.text, data.accent);
+  });
+});
+
+/* ---------------- LEDGER ---------------- */
+const ledgerList = document.getElementById('ledger-list');
+PROBLEMS.forEach((prob, i)=>{
+  const item = ledgerList.children[i];
+  const body = document.createElement('div');
+  body.className = 'ledger-body';
+  body.textContent = prob.text;
+  item.appendChild(body);
+  item.addEventListener('click', ()=>{
+    item.classList.toggle('open');
+  });
+});
+
+/* ---------------- CARDS ---------------- */
+const grid = document.getElementById('cards-grid');
+CARDS.forEach((c, i)=>{
+  const slot = document.createElement('div');
+  slot.className = 'card-slot';
+  slot.innerHTML = `
+    <div class="card-inner">
+      <div class="card-face card-front">?</div>
+      <div class="card-face card-back">
+        <button class="close-card">×</button>
+        <p class="q">${c.q}</p>
+        <button class="sol-btn">Solución</button>
+      </div>
+    </div>
+  `;
+  grid.appendChild(slot);
+
+  slot.addEventListener('click', (e)=>{
+    if(!slot.classList.contains('flipped')){
+      slot.classList.add('flipped');
+    }
+  });
+  const closeBtn = slot.querySelector('.close-card');
+  closeBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    slot.classList.remove('flipped');
+  });
+  const solBtn = slot.querySelector('.sol-btn');
+  solBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    modalBox.classList.add('solution-modal');
+    modalTitle.textContent = 'Solución propuesta';
+    modalBody.innerHTML = `
+      <p class="modal-q">${c.q}</p>
+      <p class="modal-s-text">${c.s}</p>
+    `;
+    modalBox.style.setProperty('--modal-accent', '#c9a25d');
+    overlay.classList.add('show');
+  });
+});
+
+/* ---------------- LIBROS: dodging critters ---------------- */
+function setupCritter(id, bookKey){
+  const el = document.getElementById(id);
+  let caught = false;
+  let lastDodge = 0;
+
+  function dodge(){
+    if(caught) return;
+    const now = Date.now();
+    if(now - lastDodge < 450) return; // cooldown: can't dodge again too soon
+    if(Math.random() < 0.15) return;  // small chance it just stays put
+    lastDodge = now;
+    const page = document.getElementById('page-libros');
+    const rect = page.getBoundingClientRect();
+    const maxLeft = rect.width - 90;
+    const maxTop = rect.height - 90;
+    const newLeft = 40 + Math.random() * Math.max(maxLeft-40, 10);
+    const newTop = 100 + Math.random() * Math.max(maxTop-140, 10);
+    el.style.left = newLeft + 'px';
+    el.style.top = newTop + 'px';
+  }
+
+  el.addEventListener('mouseenter', dodge);
+  el.addEventListener('touchstart', (e)=>{
+    e.preventDefault();
+    dodge();
+  }, {passive:false});
+
+  el.addEventListener('click', ()=>{
+    caught = true;
+    el.classList.add('caught');
+    const data = BOOKS[bookKey];
+    openModal(data.title, data.text, '#dcc384');
+    setTimeout(()=>{ caught = false; el.classList.remove('caught'); }, 100);
+  });
+}
+setupCritter('critter-frank', 'frank');
+setupCritter('critter-dino', 'dino');
+</script>
+</body>
+</html>
