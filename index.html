@@ -19,6 +19,7 @@
 
   --acc-cover:#4fd1c5;
   --acc-team:#5ecbe8;
+  --acc-contexto:#7fd67f;
   --acc-principios:#4fc3f7;
   --acc-problemas:#f2b84b;
   --acc-cartas:#f2c94c;
@@ -145,7 +146,7 @@ html,body{
 .cover-frame{
   border:1px solid var(--line);
   padding:56px 48px;
-  max-width:640px;
+  max-width:90%;
   text-align:center;
   position:relative;
 }
@@ -222,6 +223,69 @@ html,body{
   letter-spacing:.01em;
 }
 .team-list li:last-child{border-bottom:none;}
+
+/* ---------- CONTEXTO ---------- */
+#page-contexto{
+  background:
+    repeating-linear-gradient(115deg, rgba(238,244,242,0.02) 0px, rgba(238,244,242,0.02) 1px, transparent 1px, transparent 64px),
+    var(--bg-1);
+}
+.context-heading h2{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:clamp(26px,5vw,36px);
+  margin:0 0 22px;
+  color:var(--acc-contexto);
+  text-align:center;
+}
+.context-paragraph{
+  max-width:680px;
+  font-size:18px;
+  line-height:1.75;
+  color:var(--ink);
+  text-align:center;
+  margin:0 0 36px;
+}
+.context-paragraph em{color:var(--acc-contexto); font-style:italic;}
+.resource-row{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  justify-content:center;
+  max-width:900px;
+}
+.resource-card{
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-top:2px solid var(--acc-contexto);
+  padding:20px 20px 22px;
+  width:240px;
+  flex:1 1 220px;
+  max-width:280px;
+}
+.resource-tag{
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--acc-contexto);
+}
+.resource-card h3{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  font-size:19px;
+  margin:8px 0 10px;
+  color:var(--ink);
+}
+.resource-card p{
+  font-size:14px;
+  line-height:1.6;
+  color:var(--ink-dim);
+  margin:0;
+}
+@media (max-width:640px){
+  .resource-row{gap:12px;}
+  .resource-card{width:100%; max-width:340px;}
+}
 
 /* ---------- SOLAR PAGES (principios) ---------- */
 .solar-page{}
@@ -348,6 +412,8 @@ html,body{
   border:1px solid var(--line);
   max-width:520px;
   width:100%;
+  max-height:82vh;
+  overflow-y:auto;
   padding:32px 30px;
   position:relative;
   transform:translateY(10px);
@@ -539,7 +605,7 @@ html,body{
   <!-- PAGE 1: COVER -->
   <section class="page" id="page-cover" data-index="0">
     <div class="page-shade"></div>
-    <div class="cover-title">
+    <div class="cover-frame">
       <div class="cover-eyebrow">Bioética — Convivir</div>
       <h1 class="cover-title">Discriminación</h1>
       <p class="cover-sub">El diferente, la mesa compartida y el precio de no reconocerlo.</p>
@@ -565,8 +631,37 @@ html,body{
     <div class="turn-zone" data-next><div class="arrow"></div></div>
   </section>
 
-  <!-- PAGE 3: PRINCIPIOS (solar system) -->
-  <section class="page solar-page" id="page-principios" data-index="2">
+  <!-- PAGE 3: CONTEXTO -->
+  <section class="page context-page" id="page-contexto" data-index="2">
+    <div class="page-shade"></div>
+    <div class="context-heading">
+      <h2>Convivir y los recursos</h2>
+    </div>
+    <p class="context-paragraph">Convivir es compartir un espacio respetando la dignidad de los demás; la discriminación &mdash;tratar a alguien como inferior por ser distinto&mdash; rompe esa convivencia. Los tres recursos cuentan lo mismo en formatos diferentes: <em>The Witcher</em> (fantasía), <em>Plástico</em> (canción) y <em>Avatar</em> (película). En los tres, un grupo es rechazado o atacado por ser &ldquo;diferente&rdquo;, y por eso sirven para analizar la discriminación desde la bioética.</p>
+    <div class="resource-row">
+      <div class="resource-card">
+        <span class="resource-tag">Libro</span>
+        <h3>The Witcher</h3>
+        <p>Saga de fantasía donde los brujos y los no humanos (elfos, enanos) son tratados como seres de segunda clase y confinados a la miseria.</p>
+      </div>
+      <div class="resource-card">
+        <span class="resource-tag">Película</span>
+        <h3>Avatar</h3>
+        <p>La corporación RDA explota el planeta Pandora y desaloja al pueblo na'vi de su territorio para extraer un mineral. (no maleficiencia)</p>
+      </div>
+      <div class="resource-card">
+        <span class="resource-tag">Canción</span>
+        <h3>Plástico</h3>
+        <p>Una canción que critica la superficialidad y cómo esto afecta la escencia del ser humano y las relaciones verdaderas</p>
+      </div>
+    </div>
+    <div class="page-num">3</div>
+    <div class="back-zone" data-prev><div class="arrow"></div></div>
+    <div class="turn-zone" data-next><div class="arrow"></div></div>
+  </section>
+
+  <!-- PAGE 4: PRINCIPIOS (solar system) -->
+  <section class="page solar-page" id="page-principios" data-index="3">
     <div class="page-shade"></div>
     <div class="solar-heading">
       <h2>Principios bioéticos</h2>
@@ -582,13 +677,13 @@ html,body{
       <div class="planet" data-principle="empatia">Empatía</div>
       <div class="planet" data-principle="libertad">Libertad</div>
     </div>
-    <div class="page-num">3</div>
+    <div class="page-num">4</div>
     <div class="back-zone" data-prev><div class="arrow"></div></div>
     <div class="turn-zone" data-next><div class="arrow"></div></div>
   </section>
 
   <!-- PAGE 4: PROBLEMAS (ledger) -->
-  <section class="page ledger-page" id="page-problemas" data-index="3">
+  <section class="page ledger-page" id="page-problemas" data-index="4">
     <div class="page-shade"></div>
     <div class="solar-heading">
       <h2 style="color:var(--acc-problemas);">Problemas bioéticos</h2>
@@ -608,26 +703,26 @@ html,body{
         <h3>Pérdida de empatía frente al poder y la apariencia</h3>
       </div>
     </div>
-    <div class="page-num">4</div>
+    <div class="page-num">5</div>
     <div class="back-zone" data-prev><div class="arrow"></div></div>
     <div class="turn-zone" data-next><div class="arrow"></div></div>
   </section>
 
   <!-- PAGE 5: CARTAS (interrogantes/soluciones) -->
-  <section class="page cards-page" id="page-cartas" data-index="4">
+  <section class="page cards-page" id="page-cartas" data-index="5">
     <div class="page-shade"></div>
     <div class="cards-heading">
       <h2>Interrogantes</h2>
       <p>Voltea cada carta. Dentro, un botón revela la solución propuesta.</p>
     </div>
     <div class="cards-grid" id="cards-grid"></div>
-    <div class="page-num">5</div>
+    <div class="page-num">6</div>
     <div class="back-zone" data-prev><div class="arrow"></div></div>
     <div class="turn-zone" data-next><div class="arrow"></div></div>
   </section>
 
   <!-- PAGE 6: LIBROS -->
-  <section class="page rug-page" id="page-libros" data-index="5">
+  <section class="page rug-page" id="page-libros" data-index="6">
     <div class="page-shade"></div>
     <div class="rug-heading">
       <h2>Relación con los libros</h2>
@@ -635,18 +730,18 @@ html,body{
     </div>
     <div class="critter" id="critter-frank" style="top:30%; left:22%;">🧟</div>
     <div class="critter" id="critter-dino" style="top:60%; left:68%;">🦖</div>
-    <div class="page-num">6</div>
+    <div class="page-num">7</div>
     <div class="back-zone" data-prev><div class="arrow"></div></div>
     <div class="turn-zone" data-next><div class="arrow"></div></div>
   </section>
 
   <!-- PAGE 7: FINAL -->
-  <section class="page" id="page-final" data-index="6">
+  <section class="page" id="page-final" data-index="7">
     <div class="page-shade"></div>
     <div class="final-title">Gracias</div>
     <div class="final-line"></div>
     <div class="final-sub">Convivir — Discriminación</div>
-    <div class="page-num">7</div>
+    <div class="page-num">8</div>
     <div class="back-zone" data-prev><div class="arrow"></div></div>
   </section>
 
@@ -739,12 +834,14 @@ const BOOKS = {
   frank: {
     title: "Frankenstein",
     text: `<p>La criatura es inteligente y, al inicio, bondadosa, pero es rechazada por su aspecto; es la discriminación de la sociedad la que la empuja a la violencia. Es el "otro" despreciado solo por ser distinto.</p>
-    <p>Aquí aparece la no maleficencia (Victor daña al crear y abandonar) y la ausencia de empatía que fabrica al "monstruo". El mensaje: <em>el monstruo no nace, se crea.</em></p>`
+    <p>Aquí aparece la no maleficencia (Victor daña al crear y abandonar) y la ausencia de empatía que fabrica al "monstruo". El mensaje: <em>el monstruo no nace, se crea.</em></p>
+    <p><strong>Relación con Convivir:</strong> la convivencia se rompe antes incluso de conocer al otro, solo por su apariencia — igual que en The Witcher, Avatar y Plástico, donde el rechazo llega primero y el conocimiento del "diferente" nunca ocurre. Frankenstein muestra el peor desenlace posible de esa ruptura: cuando nadie convive con la criatura, ella termina replicando el daño que recibió.</p>`
   },
   dino: {
     title: "Mi hermano persigue dinosaurios",
     text: `<p>Historia real de un hermano que pasa de la vergüenza al orgullo y al amor por su hermano con síndrome de Down. Habla directamente de la discriminación hacia la discapacidad y del poder transformador de la empatía.</p>
-    <p>Conecta con el convivir: la convivencia verdadera es reconocer dignidad y valor en la diferencia (justicia y empatía).</p>`
+    <p>Conecta con el convivir: la convivencia verdadera es reconocer dignidad y valor en la diferencia (justicia y empatía).</p>
+    <p><strong>Relación con Convivir:</strong> mientras Frankenstein muestra el camino del rechazo, este libro muestra el camino contrario — convivir de verdad con el hermano, no solo tolerarlo. Es el mismo dilema de The Witcher, Avatar y Plástico, pero resuelto: en vez de excluir al distinto, la familia aprende a compartir la vida con él y a verlo como igual en dignidad.</p>`
   }
 };
 
